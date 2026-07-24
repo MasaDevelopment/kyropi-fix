@@ -1,0 +1,2587 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>KyroPi Jasdor - Order Online</title>
+
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #8B0000;
+            --primary-dark: #660000;
+            --secondary: #D4AF37;
+            --bg: #F4F5F7;
+            --card-bg: #FFFFFF;
+            --text: #222222;
+            --shopee-orange: #EE4D2D;
+            --xxi-gold: #C59B27;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            color: var(--text);
+        }
+
+        body {
+            background-color: var(--bg);
+            max-width: 500px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        .page {
+            display: none;
+            min-height: 100vh;
+            background: var(--bg);
+            padding-bottom: 80px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* SEARCH BAR WITH QUICK CLEAR */
+        .search-container {
+            position: relative;
+            margin: 12px 16px;
+            scroll-margin-top: 120px;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 10px 36px 10px 40px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+            background-color: #f9f9f9;
+            transition: border-color 0.2s;
+        }
+
+        .search-container input:focus {
+            border-color: var(--primary);
+            background-color: #ffffff;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: #888888;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: #999;
+            cursor: pointer;
+            background: #eee;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        /* PAGE 1: LANDING */
+        #page-landing {
+            background: linear-gradient(180deg, var(--primary) 0%, #3a0000 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* LOGO TRANSPARAN TANPA BORDER */
+        .logo-circle {
+            width: 110px;
+            height: 110px;
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            overflow: visible;
+        }
+
+        .logo-circle img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* UNIFIED TUTORIAL & SCHEDULE CARDS */
+        .tutorial-card, .schedule-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px 16px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        .tutorial-title, .schedule-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 14px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tutorial-steps, .schedule-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .step-number {
+            background: var(--secondary);
+            color: #000;
+            font-weight: 800;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .step-text {
+            font-size: 0.85rem;
+            line-height: 1.35;
+            color: #f0f0f0;
+        }
+
+        .step-text strong {
+            color: #fff;
+        }
+
+        /* CATATAN BILA JASDOR TUTUP */
+        .closed-notice-card {
+            background: rgba(220, 53, 69, 0.25);
+            border: 1.5px solid #ff4d4d;
+            border-radius: 12px;
+            padding: 12px;
+            width: 100%;
+            margin: 10px 0;
+            color: #ffcccc;
+            font-weight: 700;
+            font-size: 0.88rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .merchant-select-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px 16px;
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.2);
+            scroll-margin-top: 20px;
+            margin-top: 10px;
+        }
+
+        .merchant-btn {
+            width: 100%;
+            background: white;
+            color: var(--primary);
+            border: 1.5px solid #f0f0f0;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.98rem;
+            margin-bottom: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            transition: transform 0.15s, box-shadow 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .merchant-btn-logo {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            flex-shrink: 0;
+            background: transparent;
+        }
+
+        .merchant-btn:active {
+            transform: scale(0.98);
+        }
+
+        .merchant-btn.disabled {
+            background: #2a2a2a;
+            color: #888888;
+            border: 1px solid #444444;
+            cursor: not-allowed;
+            opacity: 0.8;
+            box-shadow: none;
+        }
+
+        .merchant-btn.disabled .maintenance-tag {
+            color: #ff4d4d;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .merchant-btn.xxi-btn {
+            background: #111;
+            color: var(--xxi-gold);
+            border: 1px solid var(--xxi-gold);
+        }
+
+        /* PAGE 2: CATALOG */
+        .app-header {
+            background: var(--primary);
+            color: white;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-logo-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* LOGO NAVBAR TRANSPARAN TANPA BORDER */
+        .app-header-logo {
+            width: 34px;
+            height: 34px;
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: visible;
+            flex-shrink: 0;
+        }
+
+        .app-header-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+        .header-title-box {
+            font-weight: 700;
+            font-size: 0.95rem;
+            line-height: 1.2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-sub-title {
+            font-size: 0.72rem;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .main-nav {
+            display: flex;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 54px;
+            z-index: 90;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 14px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .sub-nav {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 12px 16px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            scroll-behavior: smooth;
+            scroll-margin-top: 110px;
+        }
+
+        .sub-chip {
+            padding: 6px 14px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #555;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sub-chip.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .catalog-container { padding: 16px; }
+
+        /* FLASH SALE CONTAINER & CARDS */
+        .flash-sale-wrapper {
+            background: linear-gradient(135deg, #1f0000 0%, #4a0000 100%);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 0 8px 24px rgba(139, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flash-sale-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 45%, rgba(212, 175, 55, 0.12) 50%, transparent 55%);
+            animation: shimmerEffect 4s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes shimmerEffect {
+            0% { transform: translate(-30%, -30%); }
+            100% { transform: translate(30%, 30%); }
+        }
+
+        .flash-sale-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+        }
+
+        .flash-sale-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .timer-box {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .timer-unit {
+            background: #EE4D2D;
+            color: white;
+            font-weight: 800;
+            font-size: 0.72rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            min-width: 22px;
+            text-align: center;
+        }
+
+        .timer-sep {
+            color: #fff;
+            font-weight: bold;
+            font-size: 0.75rem;
+        }
+
+        .flash-sale-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .flash-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1.5px solid #FFD700;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .flash-card:active {
+            transform: scale(0.98);
+        }
+
+        .flash-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: linear-gradient(90deg, #EE4D2D, #ff2a00);
+            color: white;
+            font-size: 0.62rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 10px;
+            z-index: 2;
+            box-shadow: 0 2px 6px rgba(238, 77, 45, 0.4);
+        }
+
+        .flash-card img {
+            width: 85px;
+            height: 85px;
+            object-fit: cover;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .flash-card-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .flash-card-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #222;
+            line-height: 1.2;
+        }
+
+        .flash-price-box {
+            margin-top: 4px;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .flash-old-price {
+            font-size: 0.75rem;
+            color: #888;
+            text-decoration: line-through;
+        }
+
+        .flash-new-price {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #EE4D2D;
+        }
+
+        .flash-stock-bar {
+            background: #f0f0f0;
+            border-radius: 10px;
+            height: 8px;
+            width: 100%;
+            margin-top: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flash-stock-fill {
+            background: linear-gradient(90deg, #FF8C00, #EE4D2D);
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid #eaeaea;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .menu-card:active {
+            transform: scale(0.98);
+        }
+
+        .menu-card img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #f5f5f5;
+            margin-bottom: 8px;
+        }
+
+        .menu-card.movie-card img {
+            aspect-ratio: 3 / 4;
+        }
+
+        /* BADGE MENU & DISKON BUNDLING */
+        .menu-badge {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 12px;
+            backdrop-filter: blur(4px);
+            z-index: 2;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            letter-spacing: 0.3px;
+        }
+
+        .menu-badge.badge-bestseller { background: #EE4D2D; color: #fff; }
+        .menu-badge.badge-new { background: #28a745; color: #fff; }
+        .menu-badge.badge-award { background: #D4AF37; color: #000; }
+        .menu-badge.badge-xxi { background: #C59B27; color: #000; }
+        .menu-badge.badge-comingsoon { 
+            background: #007bff;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.4);
+        }
+
+        .menu-badge.badge-discount { background: #d9534f; color: #fff; font-size: 0.68rem; box-shadow: 0 2px 8px rgba(217, 83, 79, 0.4); }
+
+        .menu-card-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            height: 2.4em;
+            line-height: 1.2;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .menu-card-price {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.95rem;
+            margin-top: 6px;
+        }
+
+        .btn-add-item {
+            background: #28a745;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 7px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-add-item:hover {
+            background: #218838;
+        }
+
+        /* OPTIONS GRID */
+        .custom-group-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin: 12px 0 6px 0;
+            color: #333;
+        }
+
+        .checkbox-options-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .checkbox-chip {
+            position: relative;
+            flex: 1;
+        }
+
+        .checkbox-chip input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .checkbox-chip label {
+            display: block;
+            text-align: center;
+            padding: 10px 12px;
+            background: #f0f0f0;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #444;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checkbox-chip input:checked + label {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 2px 6px rgba(139, 0, 0, 0.2);
+        }
+
+        /* CHECKBOX KANTONG PLASTIK UI */
+        .bag-option-card {
+            background: #fff8e6;
+            border: 1.5px solid #ffe0b2;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .bag-option-card input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .bag-option-text {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        /* CUSTOM SCROLLABLE TIME PICKER UI */
+        .custom-time-picker-wrapper {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+
+        .time-picker-wheels {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .time-picker-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .time-picker-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #666;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .time-wheel-container {
+            width: 100%;
+            height: 110px;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+            text-align: center;
+            scrollbar-width: none;
+        }
+
+        .time-wheel-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* BANNER INFO ALL IN (CLEAN & MODERN) */
+        .all-inclusive-banner {
+            margin: 8px 16px 12px 16px;
+            padding: 10px 14px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(139, 0, 0, 0.08) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .banner-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .banner-text {
+            font-size: 0.8rem;
+            color: var(--primary-dark);
+            line-height: 1.3;
+        }
+
+        .banner-text strong {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .time-wheel-item {
+            height: 36px;
+            line-height: 36px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #555;
+            scroll-snap-align: center;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .time-wheel-item.selected {
+            background: var(--primary);
+            color: #fff;
+            border-radius: 6px;
+        }
+
+        .time-picker-colon {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-top: 18px;
+        }
+
+        .selected-time-preview {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: #fff0f0;
+            padding: 6px;
+            border-radius: 6px;
+        }
+
+        /* QTY COUNTER */
+        .qty-counter {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 15px;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .btn-qty {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-value {
+            font-weight: 800;
+            font-size: 1rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* FLOATING CART BAR */
+        .floating-cart-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            padding: 12px 16px;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.12);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 200;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+        }
+
+        .btn-go-checkout {
+            background: var(--shopee-orange);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(238, 77, 45, 0.3);
+        }
+
+        /* PAGE 3: CHECKOUT */
+        .checkout-header {
+            background: white;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .checkout-section {
+            background: white;
+            margin-bottom: 10px;
+            padding: 16px;
+        }
+
+        .checkout-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #f0f0f0;
+            gap: 8px;
+        }
+
+        .checkout-qty-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f4f5f7;
+            padding: 3px 6px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .btn-checkout-qty {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-input-group { margin-bottom: 12px; }
+        .form-input-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: #555; }
+        .form-input-group input, .form-input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            font-family: inherit;
+        }
+
+        .btn-place-order {
+            width: 100%;
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+
+        .terms-text {
+            font-size: 0.72rem;
+            color: #777;
+            text-align: center;
+            margin-top: 12px;
+            line-height: 1.4;
+        }
+
+        /* MODAL POPUP */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: flex-end;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            padding: 20px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        /* CUSTOM CONFIRM DIALOG MODAL */
+        .confirm-modal-content {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            margin: auto;
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .confirm-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #222;
+        }
+
+        .confirm-message {
+            font-size: 0.88rem;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-confirm-cancel {
+            flex: 1;
+            background: #f0f0f0;
+            color: #444;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-confirm-action {
+            flex: 1;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .movie-meta-badge {
+            display: inline-block;
+            background: #eee;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 5px;
+            margin-bottom: 8px;
+        }
+
+        /* TOAST NOTIFICATION */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(34, 34, 34, 0.95);
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 2500;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            pointer-events: none;
+            text-align: center;
+            width: 85%;
+            max-width: 380px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .toast-notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* HEADER CART BADGE */
+        .header-cart-badge {
+            background: #dc3545;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: bold;
+            border-radius: 10px;
+            padding: 2px 6px;
+            margin-left: 4px;
+        }
+
+        .discount-badge {
+            font-size: 0.75rem;
+            color: #28a745;
+            font-weight: 700;
+            display: block;
+            margin-top: 4px;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- TOAST NOTIFIKASI -->
+    <div id="toast" class="toast-notification">Notifikasi</div>
+
+    <!-- PAGE 1: LANDING -->
+    <div class="page active" id="page-landing">
+        <div class="logo-circle">
+            <img alt="KyroPi Jasdor Logo" src="https://i.imgur.com/v5evomF.png"/>
+        </div>
+        <div style="font-size:1.8rem; font-weight:800; color:#fff;">KyroPi Jasdor</div>
+        <div style="font-size:0.9rem; color:var(--secondary); margin-bottom:5px;">Platform Pemesanan Online</div>
+
+        <!-- PERINGATAN BILA STORE TUTUP -->
+        <div id="landingClosedBanner" class="closed-notice-card hidden">
+            <span>🔴 JASDOR TUTUP! BUKA PUKUL 07.00 🔴</span>
+        </div>
+
+        <!-- KETERANGAN JADWAL JASDOR -->
+        <div class="schedule-card">
+            <div class="schedule-title">
+                <span></span> Jadwal Operasional Jasdor
+            </div>
+            <div class="schedule-steps">
+                <div class="step-item">
+                    <div class="step-number">⏰</div>
+                    <div class="step-text"><strong>Jam Open:</strong> 07.00 - 21.00 WIB</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">☕</div>
+                    <div class="step-text"><strong>Jam Istirahat:</strong> 13.00 - 14.00 &amp; 18.30 - 19.00 WIB</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEKSI TUTORIAL CARA PEMESANAN -->
+        <div class="tutorial-card">
+            <div class="tutorial-title">
+                <span></span> Cara Pemesanan Online
+            </div>
+            <div class="tutorial-steps">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-text"><strong>Pilih Merchant:</strong> Klik salah satu merchant (Kopi Kenangan / Tomoro / XXI) di bawah.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-text"><strong>Pilih Menu / Tiket:</strong> Tentukan menu, varian rasa, ukuran, atau jadwal tayang.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-text"><strong>Isi Data Pemesan:</strong> Masukkan nama, kota, dan outlet tujuan.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-text"><strong>Kirim Order via WA:</strong> Tekan tombol checkout untuk membuat pesanan ke WhatsApp &amp; lakukan pembayaran via QRIS.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEKSI PILIH MERCHANT -->
+        <div class="merchant-select-card" id="merchantSelectSection">
+            <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 15px; color: #fff;">Silakan Pilih Merchant:</div>
+            
+            <button class="merchant-btn" onclick="navigateToStore('Kopi Kenangan')" type="button">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBLptG_uWleSX8zc6VdaRVZ98de2lJLs0UnhEPT_FRbk7dGjkX55WE2I7TIwFwVBXc4Yc9fqNhxxoNgUdqXI09eGrPirz7qHORCmMASm4Mi8A-OhFP8WLot0wUwUy1YcEtn1vcNEc5USHRfrY8e7aTofqF5_7xseDYGRvYJoLkGhv4m88Ca8sdWMvBJw/s619/simbol-kopi-kenangan.png" alt="Kopi Kenangan" class="merchant-btn-logo"/>
+                <span>Kopi Kenangan</span>
+            </button>
+            
+            <!-- TOMORO COFFEE DITUTUP (CLOSED) -->
+            <button class="merchant-btn disabled" onclick="showToast('🔒 Pesanan Tomoro Coffee saat ini sedang Di Nonaktifkan.')" type="button">
+                <img src="https://images.glints.com/unsafe/glints-dashboard.oss-ap-southeast-1-internal.aliyuncs.com/company-logo/ecf9fb193693ee1ec9fcdc870e057088.png" alt="Tomoro Coffee" class="merchant-btn-logo"/>
+                <span>Tomoro Coffee | <span class="maintenance-tag">Closed [ 🔒 ]</span></span>
+            </button>
+            
+            <!-- MCDONALD'S DITUTUP (CLOSED) -->
+            <button class="merchant-btn disabled" onclick="showToast('🔒 Pesanan McDonald\'s saat ini sedang Di Nonaktifkan.')" type="button">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/McDonald%27s_Golden_Arches.svg" alt="McDonald's" class="merchant-btn-logo"/>
+                <span>McDonald's | <span class="maintenance-tag">Closed [ 🔒 ]</span></span>
+            </button>
+            
+            <button class="merchant-btn xxi-btn" onclick="navigateToStore('Cinema XXI')" type="button">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/XXI.svg" alt="Cinema XXI" class="merchant-btn-logo"/>
+                <span>Cinema XXI (Promo B1G1)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- PAGE 2: CATALOG -->
+    <div class="page" id="page-catalog">
+        <!-- HEADER STICKY DINAMIS -->
+        <div class="app-header">
+            <div class="header-logo-group">
+                <div class="app-header-logo">
+                    <img alt="KyroPi Logo" src="https://i.imgur.com/v5evomF.png"/>
+                </div>
+                <div class="app-header-logo" id="headerSelectedMerchantLogoBox">
+                    <img id="headerSelectedMerchantLogo" alt="Merchant Logo" src=""/>
+                </div>
+            </div>
+            
+            <div class="header-title-box">
+                <span style="font-weight:800; font-size:0.95rem;">Pemesanan Online</span>
+                <span id="headerMerchantNameText" class="header-sub-title">Merchant Name</span>
+            </div>
+
+            <button onclick="showPage('page-landing')" style="background:rgba(255,255,255,0.2); color:white; border:none; padding:6px 12px; border-radius:20px; font-size:0.75rem; cursor:pointer; font-weight:600; display:flex; align-items:center;" type="button">
+                Ganti Merchant <span id="headerCartBadge" class="header-cart-badge hidden">0</span>
+            </button>
+        </div>
+
+        <div class="main-nav" id="mainNavContainer"></div>
+      
+        <!-- SEARCH BAR MENU WITH CLEAR BUTTON -->
+        <div class="search-container">
+            <input id="menuSearchInput" onkeyup="searchMenu()" placeholder="Cari menu kopi, makanan, film..." type="text"/>
+            <span class="search-icon">🔍</span>
+            <span id="searchClearBtn" class="search-clear" onclick="clearSearch()">&#215;</span>
+        </div>
+
+        <!-- BANNER INFO ALL IN (NO FEE) -->
+        <div class="all-inclusive-banner">
+            <span class="banner-icon">✨</span>
+            <span class="banner-text"><strong>Semua Menu & Produk Sudah TERMASUK Biaya Admin</strong> (Tidak ada Fee tambahan)</span>
+        </div>
+
+        <!-- SUB-NAVBAR DINAMIS -->
+        <div class="sub-nav" id="subCategoryNav"></div>
+
+        <div class="catalog-container">
+            <!-- FLASH SALE BOX (Kopi Kenangan Special) -->
+            <div id="flashSaleContainer" class="flash-sale-wrapper hidden">
+                <div class="flash-sale-header">
+                    <div class="flash-sale-title">
+                        <span>⚡ FLASH SALE EKSKLUSIF</span>
+                    </div>
+                    <div class="timer-box">
+                        <span class="timer-unit" id="timerDays">03</span><span class="timer-sep">:</span>
+                        <span class="timer-unit" id="timerHours">00</span><span class="timer-sep">:</span>
+                        <span class="timer-unit" id="timerMins">00</span><span class="timer-sep">:</span>
+                        <span class="timer-unit" id="timerSecs">00</span>
+                    </div>
+                </div>
+                <div class="flash-sale-grid" id="flashSaleGrid"></div>
+            </div>
+
+            <div class="menu-grid" id="catalogGridContainer"></div>
+        </div>
+
+        <div class="floating-cart-bar hidden" id="floatingCartBar">
+            <div style="cursor:pointer;" onclick="navigateToCheckout()">
+                <div style="font-size:0.8rem; color:#666;"><span id="cartTotalItemsCount">0</span> Item Terpilih</div>
+                <div id="cartTotalDisplayPrice" style="font-size:1.1rem; font-weight:800; color:var(--primary);">Rp 0</div>
+            </div>
+            <button class="btn-go-checkout" onclick="navigateToCheckout()" type="button">Checkout &#8594;</button>
+        </div>
+    </div>
+
+    <!-- PAGE 3: CHECKOUT -->
+    <div class="page" id="page-checkout">
+        <div class="checkout-header">
+            <button onclick="showPage('page-catalog')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;" type="button">&#8592;</button>
+            <div style="font-weight: 700; font-size: 1.05rem;">Checkout Pesanan</div>
+        </div>
+
+        <div class="checkout-section" style="border-bottom: 2px dashed #eee;">
+            <div style="font-size:0.9rem; font-weight:700; margin-bottom:6px;">📍 Merchant Target</div>
+            <div id="checkoutMerchantTitle" style="font-weight: 700; font-size: 0.95rem; color: var(--primary);">-</div>
+            <div style="font-size:0.75rem; color:#28a745; margin-top:4px; font-weight:600;">Estimasi Siap: 10 - 15 Menit setelah Konfirmasi Bayar</div>
+        </div>
+
+        <div class="checkout-section">
+            <div style="font-size:0.9rem; font-weight:700; margin-bottom:12px;">👤 Detail Pemesan &amp; Pengambilan</div>
+            <div class="form-input-group">
+                <label>Nama Pemesan *</label>
+                <input id="custName" placeholder="Contoh: Budi Santoso" required type="text"/>
+            </div>
+            
+            <div class="form-input-group">
+                <label>Kota *</label>
+                <input id="custCity" placeholder="Contoh: Jakarta Selatan, Bogor, dll." required type="text"/>
+            </div>
+
+            <div class="form-input-group">
+                <label id="outletInputLabel">Pilih Outlet / Bioskop *</label>
+                <input id="custOutlet" placeholder="Contoh: Grand Indonesia, Botani Square, dll." required type="text"/>
+            </div>
+
+            <!-- WAKTU PENGAMBILAN -->
+            <div class="form-input-group" id="timeOptionGroup">
+                <label>Waktu Pengambilan *</label>
+                <div class="checkbox-options-grid">
+                    <div class="checkbox-chip">
+                        <input type="radio" id="time_now" name="time_choice" value="Sekarang" checked onchange="toggleTimeInputChip('Sekarang')"/>
+                        <label for="time_now">Sekarang</label>
+                    </div>
+                    <div class="checkbox-chip">
+                        <input type="radio" id="time_schedule" name="time_choice" value="Jadwalkan" onchange="toggleTimeInputChip('Jadwalkan')"/>
+                        <label for="time_schedule">Jadwalkan</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CUSTOM SPINNER TIME PICKER -->
+            <div class="form-input-group hidden" id="customTimePickerSection">
+                <label>Pilih Jam &amp; Menit Pengambilan:</label>
+                <div class="custom-time-picker-wrapper">
+                    <div class="time-picker-wheels">
+                        <div class="time-picker-column">
+                            <span class="time-picker-label">Jam</span>
+                            <div class="time-wheel-container" id="wheelHour"></div>
+                        </div>
+                        <div class="time-picker-colon">:</div>
+                        <div class="time-picker-column">
+                            <span class="time-picker-label">Menit</span>
+                            <div class="time-wheel-container" id="wheelMinute"></div>
+                        </div>
+                    </div>
+                    <div class="selected-time-preview" id="selectedTimeDisplay">Pengambilan dijadwalkan pukul: 12:00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkout-section">
+            <div style="font-size:0.9rem; font-weight:700; margin-bottom:12px;">🛍️ Rincian Pesanan</div>
+            <div id="checkoutItemsList"></div>
+        </div>
+
+        <!-- OPSI TAMBAH KANTONG PLASTIK (+2000) -->
+        <div class="checkout-section" id="plasticBagSection">
+            <label class="bag-option-card">
+                <input type="checkbox" id="addPlasticBagCheckbox" onchange="togglePlasticBag()" />
+                <span class="bag-option-text">🛍️ Tambah Kantong Plastik (+Rp 1.000)</span>
+            </label>
+        </div>
+
+        <!-- VOUCHER DISKON / PROMO CODE -->
+        <div class="checkout-section">
+            <div style="font-size:0.9rem; font-weight:700; margin-bottom:8px;">🎟️ Kode Promo</div>
+            <div style="display:flex; gap:8px;">
+                <input id="voucherCodeInput" placeholder="Masukkan kode promo" style="flex:1; padding:8px 10px; border:1px solid #ccc; border-radius:6px; font-size:0.85rem;" type="text"/>
+                <button type="button" onclick="applyVoucher()" style="background:var(--primary); color:white; border:none; padding:8px 14px; border-radius:6px; font-weight:bold; font-size:0.8rem; cursor:pointer;">Apply</button>
+            </div>
+            <span id="voucherStatusText" class="discount-badge hidden"></span>
+        </div>
+
+        <!-- RINGKASAN PEMBAYARAN -->
+        <div class="checkout-section">
+            <div style="font-size:0.9rem; font-weight:700; margin-bottom:12px;">💳 Ringkasan Pembayaran</div>
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:8px; color:#666;">
+                <span>Subtotal Produk</span>
+                <span id="summarySubtotal">Rp 0</span>
+            </div>
+            <div id="plasticBagRow" style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:8px; color:#666;" class="hidden">
+                <span>Kantong Plastik</span>
+                <span id="summaryPlasticBag">Rp 1.000</span>
+            </div>
+            <div id="discountRow" style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:8px; color:#28a745; font-weight:600;" class="hidden">
+                <span>Diskon Promo</span>
+                <span id="summaryDiscount">-Rp 0</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:8px; color:#28a745; font-weight:600;">
+                <span>Biaya Jasa &amp; Sistem</span>
+                <span>Rp 0 (Free)</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:1.05rem; font-weight:800; color:var(--shopee-orange); border-top:1px solid #eee; padding-top:10px;">
+                <span>Total Pembayaran</span>
+                <span id="summaryGrandTotal">Rp 0</span>
+            </div>
+        </div>
+
+        <div style="padding: 16px;">
+            <div id="checkoutNoteText" style="font-size: 0.78rem; color: #777; margin-bottom: 10px; background: #fff3cd; padding: 10px; border-radius: 6px;">
+                💡 <strong>Catatan:</strong> Selesaikan Payment melalui QRIS setelah konfirmasi pesanan!
+            </div>
+            <button class="btn-place-order" onclick="handleFinalCheckout()" type="button">Buat Pesanan via WhatsApp</button>
+            <p class="terms-text">Dengan melanjutkan &amp; mengirim pesanan, Kamu setuju dengan Syarat dan Ketentuan serta Kebijakan Privasi KyroPi Jasdor</p>
+        </div>
+    </div>
+
+    <!-- MODAL CUSTOMIZER -->
+    <div class="modal-overlay" id="customModal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div id="modalTitle" style="font-weight: 700; font-size: 1.05rem;">Pilih Varian</div>
+                <button onclick="closeModal()" style="background:none; border:none; font-size: 1.4rem; cursor:pointer;" type="button">&#215;</button>
+            </div>
+            <div id="modalBody"></div>
+            <button id="btnModalConfirm" onclick="confirmAddToCart()" style="width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; margin-top: 15px; cursor: pointer;" type="button">+ Tambah ke Keranjang</button>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRM DIALOG MODAL -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="confirm-modal-content">
+            <div class="confirm-title" id="confirmModalTitle">Konfirmasi</div>
+            <div class="confirm-message" id="confirmModalMessage">Apakah Anda yakin?</div>
+            <div class="confirm-buttons">
+                <button class="btn-confirm-cancel" id="btnConfirmCancel" type="button">Batal</button>
+                <button class="btn-confirm-action" id="btnConfirmAction" type="button">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMerchant = '';
+        let currentMainCategory = '';
+        let currentSubCategory = 'semua';
+        let cart = [];
+        let activeItemForModal = null;
+        let currentQty = 1;
+        let appliedDiscount = 0;
+        let isPlasticBagAdded = false;
+
+        // URL LOGO MERCHANT UNTUK HEADER
+        const merchantLogos = {
+            'Kopi Kenangan': 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBLptG_uWleSX8zc6VdaRVZ98de2lJLs0UnhEPT_FRbk7dGjkX55WE2I7TIwFwVBXc4Yc9fqNhxxoNgUdqXI09eGrPirz7qHORCmMASm4Mi8A-OhFP8WLot0wUwUy1YcEtn1vcNEc5USHRfrY8e7aTofqF5_7xseDYGRvYJoLkGhv4m88Ca8sdWMvBJw/s619/simbol-kopi-kenangan.png',
+            'Tomoro Coffee': 'https://images.glints.com/unsafe/glints-dashboard.oss-ap-southeast-1-internal.aliyuncs.com/company-logo/ecf9fb193693ee1ec9fcdc870e057088.png',
+            'Cinema XXI': 'https://upload.wikimedia.org/wikipedia/commons/2/26/XXI.svg'
+        };
+
+        // Custom Time Picker State
+        let selectedHour = "12";
+        let selectedMinute = "00";
+
+        /* LOGIKA CEK OPERASIONAL & ISTIRAHAT JASDOR */
+        function checkStoreStatus() {
+            const now = new Date();
+            const currentMin = now.getHours() * 60 + now.getMinutes();
+
+            const openMin = 7 * 60;      // 07.00
+            const closeMin = 21 * 60;    // 21.00
+
+            const break1Start = 13 * 60; // 13.00
+            const break1End = 14 * 60;   // 14.00
+
+            const break2Start = 18 * 60 + 30; // 18.30
+            const break2End = 19 * 60;        // 19.00
+
+            let isOpen = (currentMin >= openMin && currentMin < closeMin);
+            let isBreak = (currentMin >= break1Start && currentMin < break1End) || (currentMin >= break2Start && currentMin < break2End);
+
+            return {
+                isOpen: isOpen,
+                isBreak: isBreak
+            };
+        }
+
+        /* MENU FLASH SALE */
+        const flashSaleKopKen = [
+            { 
+                id: 'kk_fs_creamy_aren', 
+                name: 'Creamy Aren Latte [FS]', 
+                price: 11000, 
+                oldPrice: 22000, 
+                badge: '🔥 50% OFF', 
+                img: 'https://img.cimagroup.my.id/creamy-aren-latte-1784202711452.webp', 
+                stockPct: 75, 
+                isFlashSale: true,
+                lockReguler: true
+            }
+        ];
+
+        const menuDatabase = {
+            'Kopi Kenangan': {
+                satuan: {
+                   baru: [
+                        { id: 'kk_b_1', name: 'Korean Banana Latte X Haechan NCT', price: 15500, badge: '✨ NEW!', img: 'https://img.cimagroup.my.id/korea-banana-latte-1784842142956.webp' },
+                        { id: 'kk_b_2', name: 'Banana Americano X Haechan NCT', price: 13500, badge: '✨ NEW!', img: 'https://img.cimagroup.my.id/banana-americano-1784842191076.webp' },
+                        { id: 'kk_b_3', name: 'Banana Choco X Haechan NCT', price: 16000, badge: '✨ NEW!', img: 'https://img.cimagroup.my.id/banana-choco-1784842229822.webp'}
+                    ],
+                    coffee: [
+                        { id: 'kk_c1', name: 'Creamy Caramel Latte', price: 17000, badge: '🔥 BEST SELLER', img: 'https://img.cimagroup.my.id/creamy-caramel-latte-1784202724920.webp' },
+                        { id: 'kk_c2', name: 'OG Aren Speculoos Latte', price: 14500, badge: '⭐ BEST AWARDS', img: 'https://img.cimagroup.my.id/og-aren-speculoos-latte-1784203753041.webp' },
+                        { id: 'kk_c3', name: 'Dua Shot OG Aren', price: 16500, img: 'https://img.cimagroup.my.id/dua-shot-og-aren-1784202876715.webp' },
+                        { id: 'kk_c4', name: 'Mocha Caramel', price: 17000, img: 'https://img.cimagroup.my.id/mocha-caramel-1784203688570.webp' },
+                        { id: 'kk_c5', name: 'Pistachio Aren Latte', price: 13500, img: 'https://img.cimagroup.my.id/pistachio-aren-latte-1784203797492.webp' },
+                        { id: 'kk_c6', name: 'Cafe Malt Latte', price: 15500, img: 'https://img.cimagroup.my.id/cafe-malt-latte-1784202359384.webp' },
+                        { id: 'kk_c7', name: 'Kopi Kenangan Mantan', price: 13500, badge: '🔥 BEST SELLER', img: 'https://img.cimagroup.my.id/kopi-kenangan-mantan-1784203103920.webp' },
+                        { id: 'kk_c8', name: 'Caramel Latte', price: 17000, img: 'https://img.cimagroup.my.id/caramel-latte-1784202441105.webp' },
+                        { id: 'kk_c9', name: 'Dua Shot Iced Shaken', price: 18000, img: 'https://img.cimagroup.my.id/dua-shot-iced-shaken-1784202845066.webp' },
+                        { id: 'kk_c10', name: 'Caramel Macchiato', price: 18000, img: 'https://img.cimagroup.my.id/caramel-macchiato-1784202476436.webp' },
+                        { id: 'kk_c11', name: 'Hazelnut Latte', price: 17000, img: 'https://img.cimagroup.my.id/hazelnut-latte-1784202991384.webp' },
+                        { id: 'kk_c12', name: 'Kopi Susu Black Aren', price: 15500, img: 'https://img.cimagroup.my.id/kopi-susu-black-aren-1784203137040.webp' },
+                        { id: 'kk_c13', name: 'Matcha Espresso', price: 17000, img: 'https://img.cimagroup.my.id/matcha-espresso-1784203595675.webp' },
+                        { id: 'kk_c14', name: 'Mocha Latte', price: 18000, img: 'https://img.cimagroup.my.id/mocha-latte-1784204334847.webp' },
+                        { id: 'kk_c15', name: 'Vanilla Latte', price: 17000, img: 'https://img.cimagroup.my.id/vanilla-latte-1784204292983.webp' },
+                        { id: 'kk_c16', name: 'Avocado Coffee', price: 18000, img: 'https://img.cimagroup.my.id/avocado-coffee-1784201984043.webp' },
+                        { id: 'kk_c17', name: 'Spanish Latte', price: 13500, badge: '⭐ BEST AWARDS', img: 'https://img.cimagroup.my.id/spanish-latte-1784204073884.webp' },
+                        { id: 'kk_c18', name: 'Creamy Aren Latte', price: 15000, img: 'https://img.cimagroup.my.id/creamy-aren-latte-1784202711452.webp' },
+                        { id: 'kk_c19', name: 'Butterscotch Sea Salt Latte', price: 16500, img: 'https://img.cimagroup.my.id/butterscotch-sea-salt-latte-1784202348680.webp' },
+                        { id: 'kk_c20', name: 'Americano', price: 12000, img: 'https://img.cimagroup.my.id/hazelnut-dutch-choco-1784202978499.webp' },
+                        { id: 'kk_c21', name: 'Cappucino', price: 15000, img: 'https://img.cimagroup.my.id/cappucino-1784202403768.webp' },
+                        { id: 'kk_c22', name: 'Latte', price: 15000, img: 'https://img.cimagroup.my.id/latte-1784203568793.webp' }
+                    ],
+                    nonCoffee: [
+                        { id: 'kk_nc1', name: 'OG Thai Tea', price: 13500, badge: '🔥 BEST SELLER', img: 'https://img.cimagroup.my.id/og-thai-tea-1784203762918.webp' },
+                        { id: 'kk_nc2', name: 'Thai Tea Loaded', price: 17500, img: 'https://img.cimagroup.my.id/thai-tea-loaded-1784204163261.webp' },
+                        { id: 'kk_nc3', name: 'OG Aren Milky Speculoos', price: 15500, img: 'https://img.cimagroup.my.id/og-aren-milky-speculoos-1784203742945.webp' },
+                        { id: 'kk_nc4', name: 'Choco Caramel', price: 13500, img: 'https://img.cimagroup.my.id/choco-caramel-1784202491031.webp' },
+                        { id: 'kk_nc5', name: 'Milk Oreo Crumble', price: 17000, img: 'https://img.cimagroup.my.id/milk-oreo-crumbel-1784203664111.webp' },
+                        { id: 'kk_nc6', name: 'Babyccino', price: 13500, img: 'https://img.cimagroup.my.id/babyccino-1784202000005.webp' },
+                        { id: 'kk_nc7', name: 'Hazelnut Choco Milktea', price: 15000, img: 'https://img.cimagroup.my.id/hazelnut-choco-milk-tea-1784202968958.webp' },
+                        { id: 'kk_nc8', name: 'Avocado Caramel', price: 18000, img: 'https://img.cimagroup.my.id/avocado-caramel-1784201911141.webp' },
+                        { id: 'kk_nc9', name: 'Avocado Milk', price: 16000, img: 'https://img.cimagroup.my.id/avocado-milk-1784201971654.webp' },
+                        { id: 'kk_nc10', name: 'Caramel Dutch Choco', price: 18000, img: 'https://img.cimagroup.my.id/caramel-dutch-choco-1784202416219.webp' },
+                        { id: 'kk_nc11', name: 'Dutch Chocolate', price: 17000, img: 'https://img.cimagroup.my.id/dutch-chocolate-1784202932687.webp' },
+                        { id: 'kk_nc12', name: 'Hazelnut Dutch Choco', price: 14500, img: 'https://img.cimagroup.my.id/hazelnut-choco-milk-tea-1784202968958.webp' },
+                        { id: 'kk_nc13', name: 'Lemon Black Tea', price: 12500, img: 'https://img.cimagroup.my.id/lemon-black-tea-1784203584896.webp' },
+                        { id: 'kk_nc14', name: 'Raspberry Hibiscus', price: 14000, img: 'https://img.cimagroup.my.id/raspberry-hibiscus-1784203807399.webp' },
+                        { id: 'kk_nc15', name: 'Matcha Latte', price: 16500, img: 'https://img.cimagroup.my.id/matcha-latte-1784203628230.webp' },
+                        { id: 'kk_nc16', name: 'Milo Dinosaurus', price: 15500, img: 'https://img.cimagroup.my.id/milo-dinosaurus-1784203674523.webp' },
+                        { id: 'kk_nc17', name: 'Susu Grass Jelly', price: 16000, img: 'https://img.cimagroup.my.id/susu-grass-jelly-1784204119821.webp' },
+                        { id: 'kk_nc18', name: 'Kenangan Milk Tea', price: 14000, img: 'https://img.cimagroup.my.id/kenangan-milk-tea-1784203045181.webp' }
+                    ],
+                    oatside: [
+                        { id: 'kk_o1', name: 'Oatside Kopi Kenangan', price: 14000, badge: '🥤 OATSIDE', img: 'https://img.cimagroup.my.id/oatside-kopi-kenangan-mantan-1784203709599.webp' },
+                        { id: 'kk_o2', name: 'Oatside Matcha Latte', price: 16500, badge: '🥤 OATSIDE', img: 'https://img.cimagroup.my.id/oatside-matcha-latte-1784203724037.webp' },
+                        { id: 'kk_o3', name: 'Oatside Latte', price: 14000, badge: '🥤 OATSIDE', img: 'https://img.cimagroup.my.id/oatside-latte-1784203716904.webp' }
+                    ],
+                    frappe: [
+                        { id: 'kk_f1', name: 'Choco Caramel Frappe', price: 18000, img: 'https://img.cimagroup.my.id/choco-caramel-frappe-1784202508311.webp' },
+                        { id: 'kk_f2', name: 'Butterscotch Kenangan Frappe', price: 19000, img: 'https://img.cimagroup.my.id/butterscotch-kenangan-frappe-1784202277888.webp' },
+                        { id: 'kk_f3', name: 'Matcha Kenangan Frappe', price: 20000, img: 'https://img.cimagroup.my.id/matcha-kenangan-frappe-1784203606856.webp' },
+                        { id: 'kk_f4', name: 'Kopi Kenangan Mantan Frappe', price: 17500, img: 'https://img.cimagroup.my.id/kopi-kenangan-mantan-frappe-1784203115170.webp' },
+                        { id: 'kk_f5', name: 'Vanilla Kenangan Frappe', price: 16500, img: 'https://img.cimagroup.my.id/vanilla-kenangan-frappe-1784204274017.webp' },
+                        { id: 'kk_f6', name: 'Dutch Choco Kenangan Frappe', price: 18500, img: 'https://img.cimagroup.my.id/dutch-choco-kenangan-frappe-1784202893282.webp' }
+                    ],
+                    food: [
+                        { id: 'kk_fd1', name: 'Canele Original', price: 10000, isFood: true, img: 'https://img.cimagroup.my.id/canele-original-1784202386203.webp' },
+                        { id: 'kk_fd2', name: 'Canele Aren', price: 11000, isFood: true, img: 'https://img.cimagroup.my.id/canele-aren-1784202377007.webp' },
+                        { id: 'kk_fd3', name: 'Aren Apple Pie', price: 12000, isFood: true, img: 'https://img.cimagroup.my.id/aren-apple-pie-1784201888716.webp' },
+                        { id: 'kk_fd4', name: 'Salt Bread Original', price: 10500, isFood: true, img: 'https://img.cimagroup.my.id/salt-bread-original-1784204028515.webp' },
+                        { id: 'kk_fd5', name: 'Salt Bread Choco', price: 9000, isFood: true, img: 'https://img.cimagroup.my.id/salt-bread-choco-butter-1784204020768.webp' },
+                        { id: 'kk_fd6', name: 'Salt Bread Sausage', price: 11500, isFood: true, img: 'https://img.cimagroup.my.id/salt-bread-sausage-1784204041783.webp' },
+                        { id: 'kk_fd7', name: 'Donut Almond', price: 10000, isFood: true, img: 'https://img.cimagroup.my.id/donut-almond-1784202764009.webp' },
+                        { id: 'kk_fd8', name: 'Chocolate Donut', price: 9500, isFood: true, img: 'https://img.cimagroup.my.id/chocolate-donut-1784202664568.webp' },
+                        { id: 'kk_fd9', name: 'Roti Coklat Klasik', price: 8500, isFood: true, img: 'https://img.cimagroup.my.id/roti-coklat-klasik-1784203834325.webp' },
+                        { id: 'kk_fd10', name: 'Roti Susu Manis', price: 9000, isFood: true, img: 'https://img.cimagroup.my.id/roti-susu-manis-1784203983620.webp' },
+                        { id: 'kk_fd11', name: 'Roti Keju Manis', price: 9500, isFood: true, img: 'https://img.cimagroup.my.id/roti-keju-manis-1784203954073.webp' },
+                        { id: 'kk_fd12', name: 'Roti Srikaya', price: 10500, isFood: true, img: 'https://img.cimagroup.my.id/roti-srikaya-1784203973128.webp' },
+                        { id: 'kk_fd13', name: 'Chocochip Cookies', price: 10000, isFood: true, img: 'https://img.cimagroup.my.id/choco-chip-cookies-1784202526295.webp' }
+                    ]
+                },
+                bundling: [
+                    {
+                        id: 'kk_b1', type: 'b1', name: 'Bundling Hemat (1 Minuman + 1 Makanan)', price: 23000, badge: '🔥 15% OFF',
+                        img: 'https://placehold.co/300x300/8B0000/FFFFFF/png?text=Bundling+Hemat',
+                        drinks: ['Kopi Kenangan Mantan', 'Spanish Latte', 'OG Aren Speculoos Latte', 'Pistachio Aren Latte', 'Kopi Susu Black Aren', 'Butterschotch Aren Latte', 'OG Thai Tea', 'Babyccino', 'Kenangan Milk Tea', 'Lemon Black Tea'], foods: ['Roti Coklat Klasik', 'Roti Keju Manis', 'Salt Bread Choco', 'Vanilla Choux Puff', 'Strawberry Choux Puff', 'Chocolate Choux Puff']
+                    },
+                    {
+                        id: 'kk_b2', type: 'b2', name: 'Bundling Double (2 Minuman + 2 Makanan)', price: 41000, badge: '🔥 20% OFF',
+                        img: 'https://placehold.co/300x300/8B0000/FFFFFF/png?text=Bundling+Ngedate',
+                        drinks: ['Kopi Kenangan Mantan', 'Spanish Latte', 'OG Aren Speculoos Latte', 'Pistachio Aren Latte', 'Kopi Susu Black Aren', 'Butterschotch Aren Latte', 'OG Thai Tea', 'Babyccino', 'Kenangan Milk Tea', 'Lemon Black Tea'], foods: ['Roti Coklat Klasik', 'Roti Keju Manis', 'Salt Bread Choco', 'Vanilla Choux Puff', 'Strawberry Choux Puff', 'Chocolate Choux Puff']
+                    }
+                ]
+            },
+            'Cinema XXI': {
+                movies: [
+                    {
+                        id: 'xxi_m1', name: 'Petaka Gunung Welirang', genre: 'Horor / Misteri', duration: '105 Menit', rating: '13+', badge: '🎬 NOW SHOWING',
+                        synopsis: 'Lima sahabat yang merayakan kelulusan kuliah dengan mendaki Gunung Welirang. Perjalanan mereka berubah menjadi mimpi buruk ketika melintasi kawasan angker Alas Lali Jiwo.',
+                        priceText: '1 Tiket Normal + 17k (Dapat 2 Tiket)', price: 0, isXXI: true, img: 'https://jadwalnonton.com/data/upload/movies/2026/petaka-gunung-welirang-16pgwg.jpg'
+                    },
+                    {
+                        id: 'xxi_m2', name: 'Juminten Edan', genre: 'Horor / Thriller', duration: '108 Menit', rating: '17+', badge: '🎬 NOW SHOWING',
+                        synopsis: 'Kisah Juminten, seorang perempuan tuna wicara yang pulang ke kampung halamannya bersama suami dan anaknya setelah delapan tahun merantau. Kepulangan yang awalnya hangat berubah menjadi kelam.',
+                        priceText: '1 Tiket Normal + 17k (Dapat 2 Tiket)', price: 0, isXXI: true, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_tQ0_zqeeWhA8sS5GSQBx_GsU83fSmDP6Zer_IIePDvyxdS_aovhM9iA&s=10'
+                    },
+                    {
+                        id: 'xxi_m3', name: 'Sihir Tanah Kubur', genre: 'Horor / Misteri', duration: '86 Menit', rating: '17+', badge: '🎬 NOW SHOWING',
+                        synopsis: 'Setelah ibunya meninggal, seorang ustaz bernama Yusuf dikejutkan oleh keputusan adiknya, Ashar, yang nekat memindahkan makam sang ibu demi memenuhi sebuah wasiat misterius. Tindakan tersebut memunculkan "Makam Wurung" atau makam kosong yang memicu serangkaian teror mistis.',
+                        priceText: '1 Tiket Normal + 17k (Dapat 2 Tiket)', price: 0, isXXI: true, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM2lGMBTIMnmq5LS_qjL2wVjfqwTF1vN0CYGQJEq2X_w&s=10'
+                    },
+                    {
+                        id: 'xxi_m4', name: 'Sajen Satu Suro', genre: 'Horor / Misteri', duration: '106 Menit', rating: '13+', badge: '🎬 NOW SHOWING',
+                        synopsis: 'Tania dan teman-temannya yang kembali ke sebuah desa untuk mengembalikan keris milik ayahnya. Tanpa disadari, kepulangan mereka menjebak mereka dalam teror balas dendam berdarah dari masa lalu yang bangkit pada malam satu Suro.',
+                        priceText: '1 Tiket Normal + 17k (Dapat 2 Tiket)', price: 0, isXXI: true, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRItHR-DD_IU5HF2K7DVHymIkMcQUjQ4yUrt-kDYVY_2w&s=10'
+                    },
+                    {
+                        id: 'xxi_m5', name: 'Kado Untuk Ibu', genre: 'Drama / Keluarga', duration: '92 Menit', rating: 'SU', badge: '🎬 NOW SHOWING',
+                        synopsis: 'kisah Faris, seorang petugas damkar, yang bertemu dengan anak kecil bernama Ara saat hendak menyusul istrinya yang menanti kelahiran. Pertemuan itu berlanjut saat Faris harus menemani Ara mencari kado ulang tahun untuk ibunya. ',
+                        priceText: '1 Tiket Normal + 17k (Dapat 2 Tiket)', price: 0, isXXI: true, img: 'https://nos.jkt-1.neo.id/media.cinema21.co.id/movie-images/16KUIU.jpg'
+                    },
+                    {
+                        id: 'xxi_m6', name: 'Spiderman: Brand New Day', genre: 'Action / Superhero', duration: '145 Menit', rating: '13+', badge: '✴️ COMING SOON',
+                        synopsis: 'Peter Parker yang hidup sendiri di New York setelah dunia melupakan identitasnya, berjuang menghadapi ancaman misterius, serta mengalami perubahan pada kekuatannya.',
+                        priceText: '1 Tiket Normal + 17k (Dapat 2 Tiket)', price: 0, isXXI: true, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKaro0lElBr3ABxKESviRwLULjo2uXAiedZh5uLMSNynnYf4i_ReL9p68&s=10'
+                    }
+                ],
+                bundling: [
+                    {
+                        id: 'xxi_b1', type: 'xxi_b1', name: 'BELI 2 TIKET LEBIH HEMAT!', price: 0, isXXI: true, badge: '🔥 50% OFF',
+                        img: 'https://i.ibb.co.com/wNQxgQCY/file-000000007c3c81fa8bf099897ecb8799.png',
+                        moviesList: ['Petaka Gunung Welirang', 'Juminten Edan', 'Sihir Tanah Kubur', 'Sajen Satu Suro', 'Kado Untuk Ibu']
+                    }
+                ]
+            }
+        };
+
+        // TIMER COUNTDOWN FLASH SALE
+        let flashSaleEndTime = localStorage.getItem('kyropi_flash_sale_end');
+        if (!flashSaleEndTime) {
+            flashSaleEndTime = new Date().getTime() + (3 * 24 * 60 * 60 * 1000);
+            localStorage.setItem('kyropi_flash_sale_end', flashSaleEndTime);
+        } else {
+            flashSaleEndTime = parseInt(flashSaleEndTime, 10);
+        }
+
+        function updateFlashTimer() {
+            const now = new Date().getTime();
+            const distance = flashSaleEndTime - now;
+
+            if (distance < 0) {
+                document.getElementById('timerDays').innerText = "00";
+                document.getElementById('timerHours').innerText = "00";
+                document.getElementById('timerMins').innerText = "00";
+                document.getElementById('timerSecs').innerText = "00";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('timerDays').innerText = String(days).padStart(2, '0');
+            document.getElementById('timerHours').innerText = String(hours).padStart(2, '0');
+            document.getElementById('timerMins').innerText = String(minutes).padStart(2, '0');
+            document.getElementById('timerSecs').innerText = String(seconds).padStart(2, '0');
+        }
+
+        setInterval(updateFlashTimer, 1000);
+        updateFlashTimer();
+
+        function renderFlashSaleSection() {
+            const container = document.getElementById('flashSaleContainer');
+            const grid = document.getElementById('flashSaleGrid');
+
+            if (currentMerchant === 'Kopi Kenangan' && currentMainCategory === 'satuan') {
+                container.classList.remove('hidden');
+                grid.innerHTML = '';
+
+                flashSaleKopKen.forEach(item => {
+                    const jsonStr = JSON.stringify(item).replace(/'/g, "&apos;");
+                    grid.innerHTML += `
+                        <div class="flash-card" onclick='openModal(${jsonStr}, false)'>
+                            <div class="flash-badge">${item.badge}</div>
+                            <img src="${item.img}" alt="${item.name}"/>
+                            <div class="flash-card-details">
+                                <div class="flash-card-name">${item.name}</div>
+                                <div class="flash-price-box">
+                                    <div class="flash-new-price">Rp ${item.price.toLocaleString('id-ID')}</div>
+                                    <div class="flash-old-price">Rp ${item.oldPrice.toLocaleString('id-ID')}</div>
+                                </div>
+                                <div class="flash-stock-bar">
+                                    <div class="flash-stock-fill" style="width: ${item.stockPct}%;"></div>
+                                </div>
+                                <button type="button" class="btn-add-item" style="background:linear-gradient(90deg, #EE4D2D, #ff2a00); margin-top:6px;">Ambil Promo</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        /* CUSTOM SPINNER TIME PICKER GENERATOR */
+        function initCustomTimePicker() {
+            const wheelHour = document.getElementById('wheelHour');
+            const wheelMinute = document.getElementById('wheelMinute');
+            
+            if (!wheelHour || !wheelMinute) return;
+
+            wheelHour.innerHTML = '';
+            wheelMinute.innerHTML = '';
+
+            for (let h = 0; h < 24; h++) {
+                const val = String(h).padStart(2, '0');
+                const isSelected = val === selectedHour ? 'selected' : '';
+                wheelHour.innerHTML += `<div class="time-wheel-item ${isSelected}" onclick="selectPickerHour('${val}')">${val}</div>`;
+            }
+
+            const minutesList = ['00', '15', '30', '45'];
+            minutesList.forEach(m => {
+                const isSelected = m === selectedMinute ? 'selected' : '';
+                wheelMinute.innerHTML += `<div class="time-wheel-item ${isSelected}" onclick="selectPickerMinute('${m}')">${m}</div>`;
+            });
+
+            updateTimeDisplay();
+        }
+
+        function selectPickerHour(val) {
+            selectedHour = val;
+            initCustomTimePicker();
+        }
+
+        function selectPickerMinute(val) {
+            selectedMinute = val;
+            initCustomTimePicker();
+        }
+
+        function updateTimeDisplay() {
+            const display = document.getElementById('selectedTimeDisplay');
+            if (display) {
+                display.innerText = `Pengambilan dijadwalkan pukul: ${selectedHour}:${selectedMinute}`;
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        function showConfirmDialog(title, message, onConfirm) {
+            const modal = document.getElementById('confirmModal');
+            document.getElementById('confirmModalTitle').innerText = title;
+            document.getElementById('confirmModalMessage').innerText = message;
+
+            const btnAction = document.getElementById('btnConfirmAction');
+            const btnCancel = document.getElementById('btnConfirmCancel');
+
+            const closeDialog = () => {
+                modal.classList.remove('active');
+            };
+
+            btnAction.onclick = () => {
+                closeDialog();
+                if (onConfirm) onConfirm();
+            };
+
+            btnCancel.onclick = () => {
+                closeDialog();
+            };
+
+            modal.classList.add('active');
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            initLandingStatusNotice();
+        }
+
+        function initLandingStatusNotice() {
+            const status = checkStoreStatus();
+            const closedBanner = document.getElementById('landingClosedBanner');
+            if (closedBanner) {
+                if (!status.isOpen) {
+                    closedBanner.classList.remove('hidden');
+                } else {
+                    closedBanner.classList.add('hidden');
+                }
+            }
+        }
+
+        function navigateToStore(merchantName) {
+            if (cart.length > 0 && currentMerchant !== merchantName) {
+                showConfirmDialog(
+                    'Pindah Merchant?', 
+                    `Kosongkan keranjang untuk berpindah pesanan ke ${merchantName}?`, 
+                    () => {
+                        cart = [];
+                        appliedDiscount = 0;
+                        updateFloatingCart();
+                        switchStoreProcess(merchantName);
+                    }
+                );
+                return;
+            }
+            switchStoreProcess(merchantName);
+        }
+
+        function switchStoreProcess(merchantName) {
+            currentMerchant = merchantName;
+            
+            const headerLogoImg = document.getElementById('headerSelectedMerchantLogo');
+            const headerMerchantText = document.getElementById('headerMerchantNameText');
+            if (headerLogoImg && merchantLogos[merchantName]) {
+                headerLogoImg.src = merchantLogos[merchantName];
+            }
+            if (headerMerchantText) {
+                headerMerchantText.innerText = merchantName;
+            }
+
+            renderNavbars();
+
+            if (merchantName === 'Cinema XXI') {
+                switchMainCategory('movies');
+            } else {
+                switchMainCategory('satuan');
+            }
+
+            showPage('page-catalog');
+
+            setTimeout(() => {
+                const searchContainer = document.querySelector('.search-container');
+                if (searchContainer) {
+                    searchContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        }
+
+        function renderNavbars() {
+            const mainNav = document.getElementById('mainNavContainer');
+            if (currentMerchant === 'Cinema XXI') {
+                mainNav.innerHTML = `
+                    <div class="nav-item active" id="nav-movies" onclick="switchMainCategory('movies')">Daftar Film</div>
+                    <div class="nav-item" id="nav-bundling" onclick="switchMainCategory('bundling')">Pembelian Tiket</div>
+                `;
+            } else {
+                mainNav.innerHTML = `
+                    <div class="nav-item active" id="nav-satuan" onclick="switchMainCategory('satuan')">Menu Satuan</div>
+                    <div class="nav-item" id="nav-bundling" onclick="switchMainCategory('bundling')">Menu Bundling</div>
+                `;
+            }
+        }
+
+        function renderSubCategories() {
+            const subNav = document.getElementById('subCategoryNav');
+            subNav.innerHTML = '';
+
+            let categories = [];
+            if (currentMerchant === 'Kopi Kenangan') {
+                categories = [
+                    { id: 'semua', label: 'Semua' },
+                    { id: 'baru', label: 'Baru' },
+                    { id: 'coffee', label: 'Coffee' },
+                    { id: 'nonCoffee', label: 'Non-Coffee' },
+                    { id: 'oatside', label: 'Oatside' },
+                    { id: 'frappe', label: 'Frappe' },
+                    { id: 'food', label: 'Food' }
+                ];
+            }
+
+            categories.forEach((cat, idx) => {
+                const activeClass = idx === 0 ? 'active' : '';
+                subNav.innerHTML += `<div class="sub-chip ${activeClass}" onclick="switchSubCategory('${cat.id}', this)">${cat.label}</div>`;
+            });
+        }
+
+        function switchMainCategory(type) {
+            currentMainCategory = type;
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            const activeNav = document.getElementById(`nav-${type}`);
+            if (activeNav) activeNav.classList.add('active');
+
+            const subNav = document.getElementById('subCategoryNav');
+            if (currentMerchant !== 'Cinema XXI' && type === 'satuan') {
+                subNav.classList.remove('hidden');
+                currentSubCategory = 'semua';
+                renderSubCategories();
+                renderFlashSaleSection();
+                renderCatalogGrid();
+            } else {
+                subNav.classList.add('hidden');
+                renderFlashSaleSection();
+                if (type === 'movies') renderMoviesGrid();
+                else if (type === 'bundling') renderBundlingGrid();
+            }
+        }
+
+        function switchSubCategory(subCat, element) {
+            currentSubCategory = subCat;
+            document.querySelectorAll('.sub-chip').forEach(chip => chip.classList.remove('active'));
+            element.classList.add('active');
+            
+            element.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            
+            renderCatalogGrid();
+        }
+
+        function searchMenu() {
+            const query = document.getElementById('menuSearchInput').value.toLowerCase().trim();
+            const clearBtn = document.getElementById('searchClearBtn');
+            const menuCards = document.querySelectorAll('.menu-card'); 
+
+            if (query.length > 0) {
+                clearBtn.style.display = 'flex';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+
+            menuCards.forEach(card => {
+                const titleElement = card.querySelector('.menu-card-name');
+                if (titleElement) {
+                    const titleText = titleElement.textContent.toLowerCase();
+                    if (titleText.includes(query)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        function clearSearch() {
+            const input = document.getElementById('menuSearchInput');
+            input.value = '';
+            searchMenu();
+            input.focus();
+        }
+
+        function getBadgeClass(badgeText) {
+            if (!badgeText) return '';
+            if (badgeText.includes('BEST SELLER')) return 'badge-bestseller';
+            if (badgeText.includes('COMING SOON')) return 'badge-comingsoon';
+            if (badgeText.includes('NEW') || badgeText.includes('PROMO')) return 'badge-new';
+            if (badgeText.includes('BEST AWARDS')) return 'badge-award';
+            if (badgeText.includes('OFF') || badgeText.includes('DISKON')) return 'badge-discount';
+            return 'badge-xxi';
+        }
+
+        function renderCatalogGrid() {
+            const container = document.getElementById('catalogGridContainer');
+            container.innerHTML = '';
+            
+            let items = [];
+            const merchantSatuan = (menuDatabase[currentMerchant] && menuDatabase[currentMerchant].satuan) ? menuDatabase[currentMerchant].satuan : {};
+
+            if (currentSubCategory === 'semua') {
+                Object.keys(merchantSatuan).forEach(key => {
+                    items = items.concat(merchantSatuan[key]);
+                });
+            } else {
+                items = merchantSatuan[currentSubCategory] || [];
+            }
+
+            if (items.length === 0) {
+                container.innerHTML = '<div style="grid-column: span 2; text-align:center; color:#888; padding:30px;">Menu belum tersedia</div>';
+                return;
+            }
+
+            items.forEach(item => {
+                const jsonStr = JSON.stringify(item).replace(/'/g, "&apos;");
+                const badgeHTML = item.badge ? `<div class="menu-badge ${getBadgeClass(item.badge)}">${item.badge}</div>` : '';
+                container.innerHTML += `
+                    <div class="menu-card" onclick='openModal(${jsonStr}, false)'>
+                        ${badgeHTML}
+                        <img src="${item.img}" alt="${item.name}"/>
+                        <div class="menu-card-name">${item.name}</div>
+                        <div class="menu-card-price">Rp ${item.price.toLocaleString('id-ID')}</div>
+                        <button type="button" class="btn-add-item">+ Tambah</button>
+                    </div>
+                `;
+            });
+        }
+
+        function renderMoviesGrid() {
+            const container = document.getElementById('catalogGridContainer');
+            container.innerHTML = '';
+            const items = menuDatabase['Cinema XXI'].movies || [];
+
+            items.forEach(item => {
+                const jsonStr = JSON.stringify(item).replace(/'/g, "&apos;");
+                const badgeHTML = item.badge ? `<div class="menu-badge ${getBadgeClass(item.badge)}">${item.badge}</div>` : '';
+                
+                container.innerHTML += `
+                    <div class="menu-card movie-card" onclick='openMovieDetailModal(${jsonStr})'>
+                        ${badgeHTML}
+                        <img src="${item.img}" alt="${item.name}"/>
+                        <div class="menu-card-name">${item.name}</div>
+                        <div class="menu-card-price" style="font-size:0.75rem; color:#666; line-height:1.2;">1 Tiket Normal + 17k<br><b style="color:var(--xxi-gold);">(Dapat 2 Tiket)</b></div>
+                        <button type="button" class="btn-add-item" style="background:#111; color:var(--xxi-gold); border:1px solid var(--xxi-gold); margin-top:6px;">Lihat Detail</button>
+                    </div>
+                `;
+            });
+        }
+
+        function renderBundlingGrid() {
+            const container = document.getElementById('catalogGridContainer');
+            container.innerHTML = '';
+            const items = (menuDatabase[currentMerchant] && menuDatabase[currentMerchant].bundling) ? menuDatabase[currentMerchant].bundling : [];
+
+            if (items.length === 0) {
+                container.innerHTML = '<div style="grid-column: span 2; text-align:center; color:#888; padding:30px;">Menu bundling belum tersedia untuk merchant ini</div>';
+                return;
+            }
+
+            items.forEach(item => {
+                const jsonStr = JSON.stringify(item).replace(/'/g, "&apos;");
+                const isMovie = currentMerchant === 'Cinema XXI';
+                const badgeHTML = item.badge ? `<div class="menu-badge ${getBadgeClass(item.badge)}">${item.badge}</div>` : '';
+                
+                const priceDisplay = isMovie 
+                    ? `<span style="font-size:0.75rem; color:#666; line-height:1.2; display:block;">1 Tiket Normal + 17k<br><b style="color:var(--xxi-gold);">(Dapat 2 Tiket)</b></span>` 
+                    : `Rp ${item.price.toLocaleString('id-ID')}`;
+
+                container.innerHTML += `
+                    <div class="menu-card ${isMovie ? 'movie-card' : ''}" onclick='openModal(${jsonStr}, true)'>
+                        ${badgeHTML}
+                        <img src="${item.img}" alt="${item.name}"/>
+                        <div class="menu-card-name">${item.name}</div>
+                        <div class="menu-card-price">${priceDisplay}</div>
+                        <button type="button" class="btn-add-item">+ Pilih Paket</button>
+                    </div>
+                `;
+            });
+        }
+
+        function buildChipOptions(groupName, options) {
+            return `
+                <div class="checkbox-options-grid">
+                    ${options.map((opt, idx) => `
+                        <div class="checkbox-chip">
+                            <input type="radio" id="${groupName}_${idx}" name="${groupName}" value="${opt.value}" ${idx === 0 ? 'checked' : ''} onchange="handleOptionChange('${groupName}', '${opt.value}')"/>
+                            <label for="${groupName}_${idx}">${opt.label}</label>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function handleOptionChange(groupName, value) {
+            if (activeItemForModal && activeItemForModal.lockReguler && value === 'Large') {
+                showToast('⚠️ Promo Flash Sale khusus ukuran Reguler!');
+                const regRadio = document.getElementById(`${groupName}_0`);
+                if (regRadio) regRadio.checked = true;
+                return;
+            }
+        }
+
+        function updateQty(delta) {
+            currentQty += delta;
+            if (currentQty < 1) currentQty = 1;
+            document.getElementById('modalQtyValue').innerText = currentQty;
+        }
+
+        function renderQtyCounterHTML() {
+            return `
+                <div class="qty-counter">
+                    <span style="font-size:0.85rem; font-weight:bold; flex:1;">Jumlah (Qty):</span>
+                    <button type="button" class="btn-qty" onclick="updateQty(-1)">-</button>
+                    <span class="qty-value" id="modalQtyValue">1</span>
+                    <button type="button" class="btn-qty" onclick="updateQty(1)">+</button>
+                </div>
+            `;
+        }
+
+        function openMovieDetailModal(item) {
+            document.getElementById('modalTitle').innerText = item.name;
+            const body = document.getElementById('modalBody');
+            body.innerHTML = `
+                <div>
+                    <span class="movie-meta-badge">🎭 ${item.genre}</span>
+                    <span class="movie-meta-badge">⏱️ ${item.duration}</span>
+                    <span class="movie-meta-badge">🔞 ${item.rating}</span>
+                </div>
+                <div style="font-size:0.85rem; font-weight:700; color:var(--xxi-gold); margin: 6px 0;">🏷️ Skema Promo: 1 Tiket Normal + 17k (Dapat 2 Tiket)</div>
+                <div class="custom-group-title">Sinopsis:</div>
+                <p style="font-size:0.85rem; color:#555; line-height:1.4;">${item.synopsis}</p>
+                <div style="margin-top:15px; font-size:0.8rem; background:#fff3cd; padding:8px; border-radius:6px; color:#856404;">
+                    💡 Pembelian tiket cinema XXI hanya bisa dipesan via paket B1G1 Promo pada menu Pembelian!
+                </div>
+            `;
+
+            document.getElementById('btnModalConfirm').innerText = 'Pesan Promo B1G1 Film Ini';
+            document.getElementById('btnModalConfirm').onclick = function() {
+                closeModal();
+                switchMainCategory('bundling');
+            };
+            document.getElementById('customModal').classList.add('active');
+        }
+
+        function openModal(item, isBundling) {
+            activeItemForModal = { ...item, isBundling };
+            currentQty = 1;
+            document.getElementById('modalTitle').innerText = item.name;
+            document.getElementById('btnModalConfirm').innerText = '+ Tambah ke Keranjang';
+            document.getElementById('btnModalConfirm').onclick = confirmAddToCart;
+
+            const body = document.getElementById('modalBody');
+            body.innerHTML = '';
+
+            if (item.isFlashSale) {
+                body.innerHTML += `
+                    <div style="background:#fff3cd; padding:10px; border-radius:8px; font-size:0.78rem; border:1px solid #ffeeba; margin-bottom:12px; color:#856404;">
+                        🛍️ <strong>Catatan:</strong> Sudah termasuk Biaya Kantong Plastik (Tanpa Tambahan Harga)
+                    </div>
+                `;
+            }
+
+            const temps = [{label: 'Iced', value: 'Iced'}, {label: 'Hot', value: 'Hot'}];
+            let sizes = [{label: 'Reguler', value: 'Reguler'}, {label: 'Large (+5k)', value: 'Large'}];
+            const sugars = [{label: 'Normal Sugar', value: 'Normal Sugar'}, {label: 'Less Sugar', value: 'Less Sugar'}, {label: 'No Sugar', value: 'No Sugar'}];
+            const ices = [{label: 'Normal Ice', value: 'Normal Ice'}, {label: 'Less Ice', value: 'Less Ice'}, {label: 'No Ice', value: 'No Ice'}];
+
+            if (item.type === 'xxi_b1') {
+                let movieOptions = item.moviesList.map(m => `<option value="${m}">${m}</option>`).join('');
+
+                body.innerHTML += `
+                    <div style="background:#f9f9f9; padding:10px; border-radius:8px; font-size:0.8rem; border:1px solid #ddd; margin-bottom:12px; color:#444;">
+                        📌 <b>Ketentuan Harga:</b> 1 Tiket Normal + 17k (Dapat 2 Tiket). Total harga akhir akan dikonfirmasi Admin WA sesuai Bioskop & Jam Tayang yang dipilih.
+                    </div>
+                    <div class="form-input-group">
+                        <label>Pilih Judul Film (2 Tiket Sama):</label>
+                        <select id="xxi_movie_select">${movieOptions}</select>
+                    </div>
+                    <div class="form-input-group">
+                        <label>Hari &amp; Tanggal Nonton *:</label>
+                        <input type="text" id="xxi_date_input" placeholder="Contoh: Sabtu, 25 Juli" required/>
+                        <div style="margin-top: 6px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                            <span style="font-size:0.75rem; color:#dc3545; font-weight:bold;">*(WAJIB Cek Jadwal Hari &amp; Jam Tayang di tix.id)</span>
+                            <a href="https://www.tix.id" target="_blank" style="background: #111; color: #C59B27; border: 1px solid #C59B27; text-decoration: none; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;">
+                                🎬 Buka TIX ID ↗
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-input-group">
+                        <label>Jam Tayang *:</label>
+                        <input type="text" id="xxi_time_input" placeholder="Contoh: 14:15" required/>
+                    </div>
+                    <!-- FORM INPUT SEAT XXI -->
+                    <div class="form-input-group">
+                        <label>Pilih Kursi / Seat *:</label>
+                        <input type="text" id="xxi_seat_input" placeholder="Contoh: D5, D6 atau Tengah/Bebas" required/>
+                    </div>
+                    ${renderQtyCounterHTML()}
+                `;
+            } else if (!isBundling) {
+                if (!item.isFood) {
+                    body.innerHTML += `
+                        <div class="custom-group-title">Suhu Tipe Minuman:</div>
+                        ${buildChipOptions('m_temp', temps)}
+                        <div class="custom-group-title">Pilih Ukuran:</div>
+                        ${buildChipOptions('m_size', sizes)}
+                        <div class="custom-group-title">Level Sugar:</div>
+                        ${buildChipOptions('m_sugar', sugars)}
+                        <div class="custom-group-title">Level Ice:</div>
+                        ${buildChipOptions('m_ice', ices)}
+                        ${renderQtyCounterHTML()}
+                    `;
+                } else {
+                    body.innerHTML += `
+                        <p style="color:#666; font-size:0.9rem;">Makanan siap disajikan tanpa kustomisasi.</p>
+                        ${renderQtyCounterHTML()}
+                    `;
+                }
+            } else {
+                let drinkSelectHTML = (item.drinks || []).map(d => `<option value="${d}">${d}</option>`).join('');
+                let foodSelectHTML = (item.foods || []).map(f => `<option value="${f}">${f}</option>`).join('');
+
+                if (item.type === 'b2') {
+                    body.innerHTML += `
+                        <div style="border-bottom: 2px dashed #eee; padding-bottom:10px; margin-bottom:10px;">
+                            <div style="font-weight:bold; color:var(--primary);">🍹 MINUMAN #1</div>
+                            <div class="form-input-group" style="margin-top:5px;"><label>Pilih Minuman 1:</label><select id="b_drink_1">${drinkSelectHTML}</select></div>
+                            <div class="custom-group-title">Ukuran 1:</div>${buildChipOptions('m_size_1', sizes)}
+                            <div class="custom-group-title">Sugar 1:</div>${buildChipOptions('m_sugar_1', sugars)}
+                            <div class="custom-group-title">Ice 1:</div>${buildChipOptions('m_ice_1', ices)}
+                        </div>
+                        <div style="border-bottom: 2px dashed #eee; padding-bottom:10px; margin-bottom:10px;">
+                            <div style="font-weight:bold; color:var(--primary);">🍹 MINUMAN #2</div>
+                            <div class="form-input-group" style="margin-top:5px;"><label>Pilih Minuman 2:</label><select id="b_drink_2">${drinkSelectHTML}</select></div>
+                            <div class="custom-group-title">Ukuran 2:</div>${buildChipOptions('m_size_2', sizes)}
+                            <div class="custom-group-title">Sugar 2:</div>${buildChipOptions('m_sugar_2', sugars)}
+                            <div class="custom-group-title">Ice 2:</div>${buildChipOptions('m_ice_2', ices)}
+                        </div>
+                        <div>
+                            <div style="font-weight:bold; color:var(--primary);">🥐 MAKANAN</div>
+                            <div class="form-input-group" style="margin-top:5px;"><label>Makanan 1:</label><select id="b_food_1">${foodSelectHTML}</select></div>
+                            <div class="form-input-group"><label>Makanan 2:</label><select id="b_food_2">${foodSelectHTML}</select></div>
+                        </div>
+                        ${renderQtyCounterHTML()}
+                    `;
+                } else {
+                    body.innerHTML += `
+                        <div class="form-input-group"><label>Pilih Minuman:</label><select id="b_drink_1">${drinkSelectHTML}</select></div>
+                        <div class="form-input-group"><label>Pilih Makanan:</label><select id="b_food_1">${foodSelectHTML}</select></div>
+                        <div class="custom-group-title">Ukuran Minuman:</div>${buildChipOptions('m_size_1', sizes)}
+                        <div class="custom-group-title">Sugar Level:</div>${buildChipOptions('m_sugar_1', sugars)}
+                        <div class="custom-group-title">Ice Level:</div>${buildChipOptions('m_ice_1', ices)}
+                        ${renderQtyCounterHTML()}
+                    `;
+                }
+            }
+
+            document.getElementById('customModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.remove('active');
+            activeItemForModal = null;
+        }
+
+        function getRadioValue(name) {
+            const el = document.querySelector(`input[name="${name}"]:checked`);
+            return el ? el.value : '';
+        }
+
+        function confirmAddToCart() {
+            const status = checkStoreStatus();
+            if (!status.isOpen) {
+                showToast('🔒 Jasdor sedang TUTUP. Anda hanya dapat melihat katalog.');
+                closeModal();
+                return;
+            }
+
+            if (!activeItemForModal) return;
+
+            const item = activeItemForModal;
+            let unitPrice = item.price;
+            let displayName = item.name;
+            let isXXIItem = item.isXXI || false;
+
+            if (item.type === 'xxi_b1') {
+                const selectedMovie = document.getElementById('xxi_movie_select').value;
+                const dateVal = document.getElementById('xxi_date_input').value.trim();
+                const timeVal = document.getElementById('xxi_time_input').value.trim();
+                const seatVal = document.getElementById('xxi_seat_input').value.trim();
+
+                if (!dateVal || !timeVal || !seatVal) {
+                    showToast('⚠️ Lengkapi Tanggal, Jam Tayang, & Seat terlebih dahulu!');
+                    return;
+                }
+
+                displayName = `B1G1 Tiket XXI: ${selectedMovie} (2 Tiket) [${dateVal}, Jam ${timeVal}, Seat: ${seatVal}]`;
+                isXXIItem = true;
+            } else if (!item.isBundling) {
+                if (!item.isFood) {
+                    const temp = getRadioValue('m_temp');
+                    const size = getRadioValue('m_size');
+                    const sugar = getRadioValue('m_sugar');
+                    const ice = getRadioValue('m_ice');
+
+                    if (size.includes('Large') && !item.lockReguler) {
+                        unitPrice += 5000;
+                    }
+                    displayName += ` (${temp}, ${size}, ${sugar}, ${ice})`;
+                }
+            } else {
+                if (item.type === 'b2') {
+                    const d1 = document.getElementById('b_drink_1').value;
+                    const s1 = getRadioValue('m_size_1');
+                    const sug1 = getRadioValue('m_sugar_1');
+                    const ice1 = getRadioValue('m_ice_1');
+
+                    const d2 = document.getElementById('b_drink_2').value;
+                    const s2 = getRadioValue('m_size_2');
+                    const sug2 = getRadioValue('m_sugar_2');
+                    const ice2 = getRadioValue('m_ice_2');
+
+                    const f1 = document.getElementById('b_food_1').value;
+                    const f2 = document.getElementById('b_food_2').value;
+
+                    if (s1.includes('Large')) unitPrice += 5000;
+                    if (s2.includes('Large')) unitPrice += 5000;
+
+                    displayName += ` [M1: ${d1} (${s1}, ${sug1}, ${ice1}) + M2: ${d2} (${s2}, ${sug2}, ${ice2}) + Food: ${f1}, ${f2}]`;
+                } else {
+                    const d1 = document.getElementById('b_drink_1').value;
+                    const f1 = document.getElementById('b_food_1').value;
+                    const s1 = getRadioValue('m_size_1');
+                    const sug1 = getRadioValue('m_sugar_1');
+                    const ice1 = getRadioValue('m_ice_1');
+
+                    if (s1.includes('Large')) unitPrice += 5000;
+                    displayName += ` [${d1} + ${f1}] (${s1}, ${sug1}, ${ice1})`;
+                }
+            }
+
+            const existingIndex = cart.findIndex(c => c.brand === currentMerchant && c.displayName === displayName && c.unitPrice === unitPrice);
+
+            if (existingIndex > -1) {
+                cart[existingIndex].qty += currentQty;
+            } else {
+                cart.push({
+                    brand: currentMerchant,
+                    displayName: displayName,
+                    unitPrice: unitPrice,
+                    qty: currentQty,
+                    isXXI: isXXIItem
+                });
+            }
+
+            closeModal();
+            updateFloatingCart();
+            showToast('✅ Berhasil ditambahkan ke keranjang!');
+        }
+
+        function changeCartItemQty(index, delta) {
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+                showToast('🗑️ Item telah dihapus dari keranjang');
+            }
+            updateFloatingCart();
+            if (document.getElementById('page-checkout').classList.contains('active')) {
+                navigateToCheckout();
+            }
+        }
+
+        function togglePlasticBag() {
+            const checkbox = document.getElementById('addPlasticBagCheckbox');
+            isPlasticBagAdded = checkbox.checked;
+            updateCheckoutTotals();
+        }
+
+        function applyVoucher() {
+            const codeInput = document.getElementById('voucherCodeInput').value.trim().toUpperCase();
+            const statusText = document.getElementById('voucherStatusText');
+            
+            if (codeInput === 'KYROPIBARU' || codeInput === 'ADMINBAIK') {
+                appliedDiscount = 2000;
+                statusText.innerText = '✨ Voucher Berhasil Digunakan! Diskon Rp 2.000';
+                statusText.classList.remove('hidden');
+                showToast('🎉 Voucher Rp 2.000 Terpasang!');
+            } else {
+                appliedDiscount = 0;
+                statusText.innerText = '❌ Kode voucher tidak valid/kadaluarsa!';
+                statusText.classList.remove('hidden');
+                statusText.style.color = '#dc3545';
+                showToast('❌ Kode Voucher Salah');
+            }
+            updateCheckoutTotals();
+        }
+
+        function updateFloatingCart() {
+            const bar = document.getElementById('floatingCartBar');
+            const badge = document.getElementById('headerCartBadge');
+
+            let totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+
+            if (totalItems > 0) {
+                badge.innerText = totalItems;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+
+            if (cart.length === 0) {
+                bar.classList.add('hidden');
+                return;
+            }
+
+            bar.classList.remove('hidden');
+            let totalPrice = cart.reduce((sum, item) => sum + (item.unitPrice * item.qty), 0);
+
+            document.getElementById('cartTotalItemsCount').innerText = totalItems;
+            if (currentMerchant === 'Cinema XXI') {
+                document.getElementById('cartTotalDisplayPrice').innerText = '--';
+            } else {
+                document.getElementById('cartTotalDisplayPrice').innerText = `Rp ${totalPrice.toLocaleString('id-ID')}`;
+            }
+        }
+
+        function updateCheckoutTotals() {
+            let subtotal = 0;
+            let hasXXI = false;
+
+            cart.forEach((item) => {
+                const itemTotal = item.unitPrice * item.qty;
+                subtotal += itemTotal;
+                if (item.isXXI) hasXXI = true;
+            });
+
+            const plasticBagCost = isPlasticBagAdded ? 1000 : 0;
+            const plasticBagRow = document.getElementById('plasticBagRow');
+
+            if (isPlasticBagAdded) {
+                plasticBagRow.classList.remove('hidden');
+            } else {
+                plasticBagRow.classList.add('hidden');
+            }
+
+            const discountRow = document.getElementById('discountRow');
+            const grandTotal = Math.max(0, subtotal + plasticBagCost - appliedDiscount);
+
+            if (hasXXI) {
+                document.getElementById('summarySubtotal').innerText = `--`;
+                document.getElementById('summaryGrandTotal').innerText = `--`;
+                discountRow.classList.add('hidden');
+            } else {
+                document.getElementById('summarySubtotal').innerText = `Rp ${subtotal.toLocaleString('id-ID')}`;
+                
+                if (appliedDiscount > 0) {
+                    discountRow.classList.remove('hidden');
+                    document.getElementById('summaryDiscount').innerText = `-Rp ${appliedDiscount.toLocaleString('id-ID')}`;
+                } else {
+                    discountRow.classList.add('hidden');
+                }
+
+                document.getElementById('summaryGrandTotal').innerText = `Rp ${grandTotal.toLocaleString('id-ID')}`;
+            }
+        }
+
+        function navigateToCheckout() {
+            const status = checkStoreStatus();
+            if (!status.isOpen) {
+                showToast('🔒 Jasdor sedang TUTUP. Tidak dapat melanjutkan Checkout.');
+                return;
+            }
+
+            if (cart.length === 0) {
+                showPage('page-catalog');
+                return;
+            }
+
+            document.getElementById('checkoutMerchantTitle').innerText = currentMerchant;
+            
+            const timeOptionGroup = document.getElementById('timeOptionGroup');
+            const noteText = document.getElementById('checkoutNoteText');
+            const outletLabel = document.getElementById('outletInputLabel');
+            const plasticBagSection = document.getElementById('plasticBagSection');
+
+            if (currentMerchant === 'Cinema XXI') {
+                timeOptionGroup.classList.add('hidden');
+                plasticBagSection.classList.add('hidden');
+                outletLabel.innerText = 'Bioskop Tujuan *';
+                noteText.innerHTML = '💡 <strong>Catatan XXI:</strong> Promo (1 Tiket Normal + 17k). Total harga pasti akan dihitung oleh Admin WhatsApp sesuai dengan Bioskop & Jam Tayang yang dipilih.';
+            } else {
+                timeOptionGroup.classList.remove('hidden');
+                plasticBagSection.classList.remove('hidden');
+                outletLabel.innerText = 'Nama Outlet *';
+                noteText.innerHTML = `💡 <strong>Catatan ${currentMerchant}:</strong> Wifi &amp; Password akan tercantum di Struk Pembelian.`;
+            }
+
+            const itemsContainer = document.getElementById('checkoutItemsList');
+            itemsContainer.innerHTML = '';
+
+            cart.forEach((item, idx) => {
+                const itemTotal = item.unitPrice * item.qty;
+
+                const priceText = item.isXXI 
+                    ? `<span style="font-size:0.8rem; color:var(--xxi-gold); font-weight:700;">(--)</span>` 
+                    : `Rp ${itemTotal.toLocaleString('id-ID')}`;
+
+                const priceDetail = item.isXXI 
+                    ? `1 Tiket Normal + 17k (Dapat 2 Tiket)` 
+                    : `@ Rp ${item.unitPrice.toLocaleString('id-ID')}`;
+
+                itemsContainer.innerHTML += `
+                    <div class="checkout-item">
+                        <div style="flex:1;">
+                            <div style="font-size:0.85rem; font-weight:600;">${item.displayName}</div>
+                            <div style="font-size:0.78rem; color:#777;">${priceDetail}</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <div class="checkout-qty-control">
+                                <button type="button" class="btn-checkout-qty" onclick="changeCartItemQty(${idx}, -1)">-</button>
+                                <span style="font-size:0.85rem; font-weight:bold; min-width:16px; text-align:center;">${item.qty}</span>
+                                <button type="button" class="btn-checkout-qty" onclick="changeCartItemQty(${idx}, 1)">+</button>
+                            </div>
+                            <span style="font-size:0.88rem; font-weight:700; min-width:60px; text-align:right;">${priceText}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            initCustomTimePicker();
+            updateCheckoutTotals();
+            showPage('page-checkout');
+        }
+
+        function toggleTimeInputChip(val) {
+            const group = document.getElementById('customTimePickerSection');
+
+            if (val === 'Jadwalkan') {
+                group.classList.remove('hidden');
+                initCustomTimePicker();
+            } else {
+                group.classList.add('hidden');
+            }
+        }
+
+        function handleFinalCheckout() {
+            const status = checkStoreStatus();
+
+            if (!status.isOpen) {
+                showToast('🔒 Jasdor sedang TUTUP. Tidak dapat membuat pesanan!');
+                return;
+            }
+
+            if (status.isBreak) {
+                showConfirmDialog(
+                    'Jadwal Istirahat!',
+                    'Admin akan sedikit terlambat membalas Pesanmu! Urgent? Call aja',
+                    () => {
+                        executeWhatsAppRedirect();
+                    }
+                );
+            } else {
+                executeWhatsAppRedirect();
+            }
+        }
+
+        function executeWhatsAppRedirect() {
+            const name = document.getElementById('custName').value.trim();
+            const city = document.getElementById('custCity').value.trim();
+            const outlet = document.getElementById('custOutlet').value.trim();
+
+            if (!name || !city || !outlet) {
+                showToast('⚠️ Silakan lengkapi Nama, Kota, dan Outlet/Bioskop!');
+                return;
+            }
+
+            let timeValue = 'Sesuai Tiket/Jadwal';
+            if (currentMerchant !== 'Cinema XXI') {
+                const timeOpt = getRadioValue('time_choice');
+                timeValue = 'Sekarang';
+                if (timeOpt === 'Jadwalkan') {
+                    timeValue = `Dijadwalkan Pukul ${selectedHour}:${selectedMinute}`;
+                }
+            }
+
+            let orderListText = '';
+            let grandTotal = 0;
+            let isXXI = currentMerchant === 'Cinema XXI';
+
+            cart.forEach((item, idx) => {
+                const itemTotal = item.unitPrice * item.qty;
+                grandTotal += itemTotal;
+                
+                const itemPriceText = item.isXXI ? '(Skema B1G1 + 17k - Price Check Admin)' : `Rp ${itemTotal.toLocaleString('id-ID')}`;
+                orderListText += `${idx + 1}. [${item.brand}] ${item.displayName} (Qty: ${item.qty}) - ${itemPriceText}\n`;
+            });
+
+            const plasticBagCost = isPlasticBagAdded ? 1000 : 0;
+            const finalPriceCalc = Math.max(0, grandTotal + plasticBagCost - appliedDiscount);
+            
+            const totalText = isXXI ? 'DICEK ADMIN (Sesuai Bioskop & Jam)' : `Rp ${finalPriceCalc.toLocaleString('id-ID')}`;
+            const subtotalText = isXXI ? 'AKUMULASI ADMIN' : `Rp ${grandTotal.toLocaleString('id-ID')}`;
+            
+            const plasticBagLineText = isPlasticBagAdded ? `Kantong Plastik : Rp 2.000\n` : '';
+            const discountLineText = appliedDiscount > 0 ? `Diskon Voucher : -Rp ${appliedDiscount.toLocaleString('id-ID')}\n` : '';
+            
+            /* CATATAN KANTONG PLASTIK DI FORMAT WA */
+            const plasticBagNoteText = isPlasticBagAdded ? `\nNote: Tambah kantong plastik` : '';
+
+            const whatsappText = 
+`── .✦ *FORMAT ORDER ${currentMerchant.toUpperCase()}* ✦.──    
+          
+Atas Nama : ${name}
+Kota : ${city}
+Outlet/Bioskop : ${outlet}
+Jam/Jadwal : ${timeValue}
+
+Pesanan : 
+${orderListText}
+Subtotal : ${subtotalText}
+${plasticBagLineText}${discountLineText}Biaya Jasa : Rp 0 (Free)
+*Total Bayar : ${totalText}*${plasticBagNoteText}
+
+> Diisi Otomatis Oleh Sistem KyroPi Jasdor!
+> Setelah Format ini dikirim, segera melakukan Payment melalui QRIS/E-Wallet`;
+
+            const targetPhone = '6281229802490';
+            const encodedUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(whatsappText)}`;
+            
+            window.open(encodedUrl, '_blank');
+        }
+
+        window.onload = function() {
+            initLandingStatusNotice();
+        };
+    </script>
+</body>
+</html>
